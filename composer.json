@@ -1,0 +1,23 @@
+{
+    "name": "neox1990/iracing-apiwrapper",
+    "description": "Wrapper to get data from the iRacing Web API and derived formats",
+    "type": "library",
+    "require": {
+        "php": "^8.0",
+        "ext-curl": "*",
+        "curl/curl": "2.*"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Neox1990\\IracingApiwrapper\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ronald Großmann",
+            "email": "dev@ronaldg.net"
+        }
+    ],
+    "minimum-stability": "dev"
+}
