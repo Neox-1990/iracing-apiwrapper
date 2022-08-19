@@ -35,12 +35,21 @@ abstract class Request
         }
 
         $this->tempDir = $tempDir ?? __DIR__.'/';
+    }
 
-        if(!file_exists($this->tempDir.'cookiejar.txt') || !$this->checkSession()){
-            @unlink($this->tempDir.'cookiejar.txt');
-            $this->auth();
+    /**
+     * Deletes old cookie-data. Should be called at the start of a lot of consequetive calls.
+     *
+     * @return void
+     */
+    public function initReset(){
+        @unlink($this->tempDir.'cookiejar.txt');
+        $safety = 0;
+        while(file_exists($this->tempDir.'cookiejar.txt') && $safety < 10000){
+            echo "wait \r\n";
+            $safety++;
         }
-
+        $this->auth();
     }
 
     /**
@@ -53,7 +62,7 @@ abstract class Request
     protected function perform(String $apiUrl, array $parameter)
     :Curl
     {
-        if (!$this->checkSession()) {
+        if(!file_exists($this->tempDir.'cookiejar.txt') || !$this->checkSession()){
             $this->auth();
         }
 
