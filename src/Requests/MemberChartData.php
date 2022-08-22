@@ -23,10 +23,12 @@ class MemberChartData extends Request
         $category_id = in_array($category_id, [1,2,3,4]) ? $category_id : 1;
         $chart_type = in_array($chart_type, [1,2,3]) ? $chart_type : 1;
         $parameter = [
-            'cust_id' => $cust_id,
             'category_id' => $category_id,
             'chart_type' => $chart_type
         ];
+        if($cust_id != 0){
+            $parameter['cust_id'] = $cust_id;
+        }
         $curl = $this->perform("https://members-ng.iracing.com/data/member/chart_data", $parameter);
         $json = json_decode($curl->response);
         $this->updateRateLimit($curl);
