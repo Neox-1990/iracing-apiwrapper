@@ -5,7 +5,8 @@
     "require": {
         "php": "^8.0",
         "ext-curl": "*",
-        "curl/curl": "2.*"
+        "curl/curl": "2.*",
+        "kegi/netscape-cookie-file-handler": "*"
     },
     "license": "MIT",
     "autoload": {

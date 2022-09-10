@@ -3,7 +3,10 @@
 namespace Neox1990\IracingApiwrapper;
 
 use Curl\Curl;
+use DateTime;
 use Exception;
+use KeGi\NetscapeCookieFileHandler\Configuration\Configuration;
+use KeGi\NetscapeCookieFileHandler\CookieFileHandler;
 
 abstract class Request
 {
@@ -14,6 +17,10 @@ abstract class Request
     protected $ratelimitLimit;
     protected $ratelimitRemaining;
     protected $ratelimitReset;
+
+    protected $cookieExpiration;
+
+    public const COOKIEJARNAME = 'iaw_jar.txt';
 
     /**
      * Constructor
@@ -35,6 +42,7 @@ abstract class Request
         }
 
         $this->tempDir = $tempDir ?? __DIR__.'/';
+        $this->readCookieExpiration();
     }
 
     /**
@@ -43,9 +51,9 @@ abstract class Request
      * @return void
      */
     public function initReset(){
-        @unlink($this->tempDir.'cookiejar.txt');
+        @unlink($this->tempDir.self::COOKIEJARNAME);
         $safety = 0;
-        while(file_exists($this->tempDir.'cookiejar.txt') && $safety < 10000){
+        while(file_exists($this->tempDir.self::COOKIEJARNAME) && $safety < 10000){
             echo "wait \r\n";
             $safety++;
         }
@@ -62,13 +70,13 @@ abstract class Request
     protected function perform(String $apiUrl, array $parameter)
     :Curl
     {
-        if(!file_exists($this->tempDir.'cookiejar.txt') || !$this->checkSession()){
+        if(!$this->checkSession()){
             $this->auth();
         }
 
         $curl = new Curl();
-        $curl->setOpt(CURLOPT_COOKIEFILE, $this->tempDir.'cookiejar.txt');
-        $curl->setOpt(CURLOPT_COOKIEJAR, $this->tempDir.'cookiejar.txt');
+        $curl->setOpt(CURLOPT_COOKIEFILE, $this->tempDir.self::COOKIEJARNAME);
+        $curl->setOpt(CURLOPT_COOKIEJAR, $this->tempDir.self::COOKIEJARNAME);
         $curl->get($apiUrl, $parameter);
         $this->updateRateLimit($curl);
         return $curl;
@@ -76,22 +84,14 @@ abstract class Request
 
     /**
      * Checks if the session is still usuable
-     * Session could be not usuable due to not being authenticated or
-     * hitting the rate limit.
+     * Session could be not usuable due to not being authenticated
      *
      * @return boolean True if session is still usable
      */
     public function checkSession()
     :bool
     {
-        $curl = new Curl();
-        $curl->setOpt(CURLOPT_COOKIEFILE, $this->tempDir.'cookiejar.txt');
-        $curl->setOpt(CURLOPT_COOKIEJAR, $this->tempDir.'cookiejar.txt');
-        $curl->get('https://members-ng.iracing.com/data/doc');
-        $this->updateRateLimit($curl);
-        $curl->close();
-        //echo "\nChecked:\nIs Error - ".($curl->isError() ? 'true' : 'false')."\nResponse - ".$curl->response."\n";
-        return !$curl->isError();
+        return $this->cookieExpiration > new DateTime();
     }
 
     /**
@@ -107,7 +107,7 @@ abstract class Request
             'password' => $this->iracingPassword
         ];
         $curl = new Curl();
-        $curl->setOpt(CURLOPT_COOKIEJAR, $this->tempDir.'cookiejar.txt');
+        $curl->setOpt(CURLOPT_COOKIEJAR, $this->tempDir.self::COOKIEJARNAME);
         $curl->post('https://members-ng.iracing.com/auth', $data);
 
         if ($curl->isError()) {
@@ -146,6 +146,42 @@ abstract class Request
     {
         $hash = hash('sha256',mb_convert_encoding(trim($password).strtolower(trim($username)),'UTF-8'), true);
         return base64_encode($hash);
+    }
+
+    /**
+     * Reads the iRacing cookies from the jar and writes the oldest 
+     * expiringdate into the class field
+     *
+     * @return void
+     */
+    protected function readCookieExpiration()
+    :void
+    {
+        //Check if cookie even exists
+        if(!file_exists($this->tempDir.self::COOKIEJARNAME)){
+            $this->cookieExpiration = (new DateTime())->setTimestamp(0);
+            return;
+        }
+
+        //Read cookie
+        $configuration = (new Configuration())->setCookieDir($this->tempDir);
+        $cookieJar = (new CookieFileHandler($configuration))->parseFile(self::COOKIEJARNAME);
+        $cookies = $cookieJar->getAll()->getCookies();
+
+        //Get only iRacing Domain cookies
+        $cookies = array_filter($cookies, function($key){
+            return str_contains($key, 'iracing.com');
+        }, ARRAY_FILTER_USE_KEY);
+        //extract all epirations
+        $dates = array_reduce($cookies, function($carry, $cookieArray){
+            foreach($cookieArray as $cookie){
+                $carry[] = $cookie->getExpire();
+            }
+            return $carry;
+        }, []);
+        //Sort and save oldest date
+        asort($dates);
+        $this->cookieExpiration = array_pop($dates);
     }
 
     abstract protected function getJSON():String;
