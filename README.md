@@ -3,49 +3,57 @@ PHP Wrapper to get data from the iRacing API and derived formats for certain end
 
 Coverage of API endpoints:
 
-- Car :x: 
-    - assets
-    - get
-- CarClass :x:
-    - get
-- Constants :x:
-    - categories
-    - divisions
-    - event_types
+- Car :white_check_mark: 
+    - assets :ballot_box_with_check:
+    - get :ballot_box_with_check:
+- CarClass :white_check_mark:
+    - get :ballot_box_with_check:
+- Constants :white_check_mark:
+    - categories :ballot_box_with_check:
+    - divisions :ballot_box_with_check:
+    - event_types :ballot_box_with_check:
+- Hosted :x:
+    - combined_sessions
+    - sessions
 - League :x:
     - cust_league_sessions
     - directory
     - get
     - get_points_systems
+    - membership
     - seasons
     - season_standings
     - season_sessions
-- Lookup :x:
-    - club_history
-    - coutries
+- Lookup :record_button:
+    - club_history :ballot_box_with_check:
+    - coutries :ballot_box_with_check:
+    - drivers
     - get
-    - licences
-- Member :white_check_mark:
+    - licences :ballot_box_with_check:
+- Member :record_button:
     - chart_data :ballot_box_with_check:
     - get :ballot_box_with_check:
     - info :ballot_box_with_check:
-- Results :x:
-    - get
-    - eventlog
-    - lap_chart_data
-    - lap_data
+    - profile
+- Results :record_button:
+    - get :ballot_box_with_check:
+    - eventlog :ballot_box_with_check:
+    - lap_chart_data :ballot_box_with_check:
+    - lap_data :ballot_box_with_check:
     - search_hosted
     - search_series
     - season_results
 - Season :x:
     - list
+    - race_guide
 - Series :x:
     - assets
     - get
     - seasons
     - stats_series
-- Stats :x:
-    - member_career
+- Stats :record_button:
+    - member_bests
+    - member_career :ballot_box_with_check:
     - member_division
     - member_recent_races
     - member_summary
