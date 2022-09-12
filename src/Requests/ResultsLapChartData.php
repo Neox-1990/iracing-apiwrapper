@@ -11,13 +11,16 @@ class ResultsLapChartData extends Request
 {
     /**
      * Get data as JSON String
+     * Usually returns only the links to the data chunks on aws
+     * With the addChunkContent, thosse data chunks will be fetched as well and 
+     * combined (default behavior)
      *
      * @param  integer $subsession_id
      * @param  integer $simsession_number The main event is 0; the preceding event is -1, and so on.
      * @param  bool $addChunkcontent Should chunked data be added in the field "chunkdata"
      * @return String
      */
-    public function getJSON(int $subsession_id = 0, int $simsession_number = 0, bool $addChunkcontent = true)
+    public function getJSON(int $subsession_id, int $simsession_number, bool $addChunkcontent = true)
     :String
     {
         //clamp quarter to valid values
@@ -43,13 +46,16 @@ class ResultsLapChartData extends Request
 
     /**
      * Get data as associative array
+     * Usually returns only the links to the data chunks on aws
+     * With the addChunkContent, thosse data chunks will be fetched as well and 
+     * combined (default behavior)
      *
      * @param  integer $subsession_id
      * @param  integer $simsession_number The main event is 0; the preceding event is -1, and so on.
      * @param  bool $addChunkcontent Should chunked data be added in the field "chunkdata"
      * @return array Data in associative array
      */
-    public function getArray(int $subsession_id = 0, int $simsession_number = 0, bool $addChunkcontent = true)
+    public function getArray(int $subsession_id, int $simsession_number, bool $addChunkcontent = true)
     :array
     {
         return json_decode($this->getJSON($subsession_id, $simsession_number, $addChunkcontent), true);

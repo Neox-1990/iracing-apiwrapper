@@ -183,7 +183,4 @@ abstract class Request
         asort($dates);
         $this->cookieExpiration = array_pop($dates);
     }
-
-    abstract protected function getJSON():String;
-    abstract protected function getArray():array;
 }

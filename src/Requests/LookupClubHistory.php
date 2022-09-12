@@ -16,7 +16,7 @@ class LookupClubHistory extends Request
      * @param  integer $season_quarter Quarter of the year (1-4)
      * @return String
      */
-    public function getJSON(int $season_year = 0, int $season_quarter = 0)
+    public function getJSON(int $season_year, int $season_quarter)
     :String
     {
         //clamp quarter to valid values
@@ -37,7 +37,7 @@ class LookupClubHistory extends Request
      * @param  integer $season_quarter Quarter of the year (1-4)
      * @return array Data in associative array
      */
-    public function getArray(int $season_year = 0, int $season_quarter = 0)
+    public function getArray(int $season_year, int $season_quarter)
     :array
     {
         return json_decode($this->getJSON($season_year, $season_quarter), true);

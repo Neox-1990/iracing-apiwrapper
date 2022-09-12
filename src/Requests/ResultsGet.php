@@ -16,7 +16,7 @@ class ResultsGet extends Request
      * @param  boolean $include_licenses add license info to the driver info
      * @return String
      */
-    public function getJSON(int $subsession_id = 0, bool $include_licenses = false)
+    public function getJSON(int $subsession_id, bool $include_licenses = false)
     :String
     {
         //clamp quarter to valid values
@@ -36,7 +36,7 @@ class ResultsGet extends Request
      * @param  boolean $include_licenses add license info to the driver info
      * @return array Data in associative array
      */
-    public function getArray(int $subsession_id = 0, bool $include_licenses = false)
+    public function getArray(int $subsession_id, bool $include_licenses = false)
     :array
     {
         return json_decode($this->getJSON($subsession_id, $include_licenses), true);

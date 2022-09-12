@@ -39,6 +39,6 @@ class StatsMemberCareer extends Request
     public function getArray(int $cust_id = 0)
     :array
     {
-        return json_decode($this->getJSON(), true);
+        return json_decode($this->getJSON($cust_id), true);
     }
 }

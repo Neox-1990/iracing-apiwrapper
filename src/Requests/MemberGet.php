@@ -17,7 +17,7 @@ class MemberGet extends Request
      * @param boolean $include_license Should license information be included
      * @return String Data in JSON format
      */
-    public function getJSON(int|array $cust_ids = 0, bool $include_license = false)
+    public function getJSON(int|array $cust_ids, bool $include_license = false)
     :String
     {
         if(is_array($cust_ids)){
@@ -42,7 +42,7 @@ class MemberGet extends Request
      * @param boolean $include_license Should license information be included
      * @return array Data as associative array
      */
-    public function getArray(int|array $cust_ids = 0, bool $include_license = false)
+    public function getArray(int|array $cust_ids, bool $include_license = false)
     :array
     {
         return json_decode($this->getJSON($cust_ids, $include_license), true);

@@ -17,18 +17,18 @@ class MemberChartData extends Request
      * @param  integer $chart_type Type of chart: 1 - iRating; 2 - TT Rating; 3 - License/SR
      * @return String JSON Data
      */
-    public function getJSON(int $cust_id = 0, int $category_id = 1, int $chart_type = 1)
+    public function getJSON(int $cust_id, int $category_id, int $chart_type)
     :String
     {
         $category_id = in_array($category_id, [1,2,3,4]) ? $category_id : 1;
         $chart_type = in_array($chart_type, [1,2,3]) ? $chart_type : 1;
         $parameter = [
+            'cust_id' => $cust_id,
             'category_id' => $category_id,
-            'chart_type' => $chart_type
+            'chart_type' => $chart_type,
+
         ];
-        if($cust_id != 0){
-            $parameter['cust_id'] = $cust_id;
-        }
+        
         $curl = $this->perform("https://members-ng.iracing.com/data/member/chart_data", $parameter);
         $json = json_decode($curl->response);
         $this->updateRateLimit($curl);
@@ -38,7 +38,7 @@ class MemberChartData extends Request
     }
 
 
-    public function getArray(int $cust_id = 0, int $category_id = 1, int $chart_type = 1)
+    public function getArray(int $cust_id, int $category_id, int $chart_type)
     :array
     {
         return json_decode($this->getJSON($cust_id, $category_id, $chart_type));
